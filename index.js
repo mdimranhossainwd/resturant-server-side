@@ -14,6 +14,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.RESTURANT_SECRET_NAME}:${process.env.RESTURANT_SECRET_PASSWORD}@cluster0.2xcsswz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -34,8 +35,30 @@ async function run() {
       .db("restruantDB")
       .collection("foodCollections");
 
+    // GATEMAN VERIFY TOKEN
+
+    const gateman = (req, res, next) => {
+      const { token } = req.cookies;
+
+      if (!token) {
+        return res.status(401).send({ message: "Your are not Authorized" });
+      }
+
+      jwt.verify(
+        token,
+        process.env.RESTURANT_ACCESS_TOKEN,
+        function (err, decoded) {
+          if (err) {
+            return res.status(401).send({ message: "Your are not Authorized" });
+          }
+          req.user = decoded;
+          next();
+        }
+      );
+    };
+
     // GET FOOD ITEMS
-    app.get("/resturant/api/v1/fooditems", async (req, res) => {
+    app.get("/resturant/api/v1/fooditems", gateman, async (req, res) => {
       const cursor = await foodItemCollections.find().toArray();
       res.send(cursor);
     });
@@ -43,13 +66,13 @@ async function run() {
     // JWT TOKEN SET
     app.post("/resturant/api/v1/auth/access-token", async (req, res) => {
       const user = req.body;
-      const token = await jwt.sign(user, process.env.RESTURANT_ACCESS_TOKEN, {
+      const token = jwt.sign(user, process.env.RESTURANT_ACCESS_TOKEN, {
         expiresIn: "1h",
       });
       res
         .cookie("token", token, {
           httpOnly: true,
-          secure: false,
+          secure: true,
           sameSite: "none",
         })
         .send({ success: true });
