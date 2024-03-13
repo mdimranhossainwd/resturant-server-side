@@ -7,16 +7,19 @@ const port = process.env.PORT || 3000;
 require("dotenv").config();
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
-app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:5173"],
     credentials: true,
   })
 );
+
+app.use(express.json());
 app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.RESTURANT_SECRET_NAME}:${process.env.RESTURANT_SECRET_PASSWORD}@cluster0.2xcsswz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -35,6 +38,7 @@ async function run() {
       .db("restruantDB")
       .collection("foodCollections");
 
+    const addFoodCollections = client.db("restruantDB").collection("addfood");
     // GATEMAN VERIFY TOKEN
 
     const gateman = (req, res, next) => {
@@ -57,10 +61,26 @@ async function run() {
       );
     };
 
+    // ALL GET ITEMS
     // GET FOOD ITEMS
     app.get("/resturant/api/v1/fooditems", gateman, async (req, res) => {
       const cursor = await foodItemCollections.find().toArray();
       res.send(cursor);
+    });
+
+    // GET TO CART SPECEFIC ITEMS
+    app.get("/resturant/api/v1/addfood", async(req,res) => {
+      const cursor = await addFoodCollections.find().toArray();
+      res.send(cursor)
+    })
+
+    // ALL POST GENERATED
+
+    // ADD TO CART GENERATED
+    app.post("/resturant/api/v1/additem", async (req, res) => {
+      const body = req.body;
+      const result = await addFoodCollections.insertOne(body);
+      res.send(result);
     });
 
     // JWT TOKEN SET
