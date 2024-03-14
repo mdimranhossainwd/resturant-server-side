@@ -69,10 +69,19 @@ async function run() {
     });
 
     // GET TO CART SPECEFIC ITEMS
-    app.get("/resturant/api/v1/addfood", async(req,res) => {
+    app.get("/resturant/api/v1/addfood", async (req, res) => {
       const cursor = await addFoodCollections.find().toArray();
-      res.send(cursor)
-    })
+      res.send(cursor);
+    });
+
+    // GET TO SPECEFIC USER'S
+
+    app.get("/resturant/api/v1/additem", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const cursor = await addFoodCollections.find(query).toArray();
+      res.send(cursor);
+    });
 
     // ALL POST GENERATED
 
