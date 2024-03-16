@@ -40,6 +40,7 @@ async function run() {
     const addFoodItemsCollections = client
       .db("restruantDB")
       .collection("recipiefood");
+    const userCollections = client.db("restruantDB").collection("users");
 
     const addFoodCollections = client.db("restruantDB").collection("addfood");
     // GATEMAN VERIFY TOKEN
@@ -89,6 +90,12 @@ async function run() {
     // ALL POST GENERATED
 
     // ADD TO CART GENERATED
+    app.post("/resturant/api/v1/user", async (req, res) => {
+      const body = req.body;
+      const result = await userCollections.insertOne(body);
+      res.send(result);
+    });
+
     app.post("/resturant/api/v1/additem", async (req, res) => {
       const body = req.body;
       const result = await addFoodCollections.insertOne(body);
