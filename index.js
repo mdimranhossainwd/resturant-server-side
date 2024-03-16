@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
 require("dotenv").config();
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(
   cors({
     origin: ["http://localhost:5173"],
@@ -89,6 +89,14 @@ async function run() {
     app.post("/resturant/api/v1/additem", async (req, res) => {
       const body = req.body;
       const result = await addFoodCollections.insertOne(body);
+      res.send(result);
+    });
+
+    // ALL DELETE ITEM FUNCTONS
+    app.delete("/resturant/api/v1/additem/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await addFoodCollections.deleteOne(query);
       res.send(result);
     });
 
