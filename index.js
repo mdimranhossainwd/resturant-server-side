@@ -37,6 +37,9 @@ async function run() {
     const foodItemCollections = client
       .db("restruantDB")
       .collection("foodCollections");
+    const addFoodItemsCollections = client
+      .db("restruantDB")
+      .collection("recipiefood");
 
     const addFoodCollections = client.db("restruantDB").collection("addfood");
     // GATEMAN VERIFY TOKEN
@@ -89,6 +92,13 @@ async function run() {
     app.post("/resturant/api/v1/additem", async (req, res) => {
       const body = req.body;
       const result = await addFoodCollections.insertOne(body);
+      res.send(result);
+    });
+
+    // ADD RECIPIE ITEM TO ADMIN
+    app.post("/resturant/api/v1/addrecipie", async (req, res) => {
+      const body = req.body;
+      const result = await addFoodItemsCollections.insertOne(body);
       res.send(result);
     });
 
