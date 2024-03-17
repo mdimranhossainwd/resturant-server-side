@@ -68,7 +68,7 @@ async function run() {
     // ALL GET ITEMS
     // GET FOOD ITEMS
     app.get("/resturant/api/v1/fooditems", gateman, async (req, res) => {
-      const cursor = await foodItemCollections.find().toArray();
+      const cursor = await addFoodItemsCollections.find().toArray();
       res.send(cursor);
     });
 
@@ -95,6 +95,11 @@ async function run() {
       const result = await userCollections.insertOne(body);
       res.send(result);
     });
+
+    app.get('/resturant/api/v1/user', async(req,res) => {
+      const cursor = await userCollections.find().toArray();
+      res.send(cursor)
+    })
 
     app.post("/resturant/api/v1/additem", async (req, res) => {
       const body = req.body;
