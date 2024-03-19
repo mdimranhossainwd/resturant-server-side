@@ -72,6 +72,13 @@ async function run() {
       res.send(cursor);
     });
 
+    app.delete("/resturant/api/v1/fooditems/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await addFoodItemsCollections.deleteOne(query);
+      res.send(result);
+    });
+
     // GET TO CART SPECEFIC ITEMS
     app.get("/resturant/api/v1/addfood", async (req, res) => {
       const cursor = await addFoodCollections.find().toArray();
@@ -96,10 +103,10 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/resturant/api/v1/user', async(req,res) => {
+    app.get("/resturant/api/v1/user", async (req, res) => {
       const cursor = await userCollections.find().toArray();
-      res.send(cursor)
-    })
+      res.send(cursor);
+    });
 
     app.post("/resturant/api/v1/additem", async (req, res) => {
       const body = req.body;
@@ -115,6 +122,12 @@ async function run() {
     });
 
     // ALL DELETE ITEM FUNCTONS
+    app.delete("/resturant/api/v1/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollections.deleteOne(query);
+      res.send(result);
+    });
     app.delete("/resturant/api/v1/additem/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
