@@ -72,10 +72,37 @@ async function run() {
       res.send(cursor);
     });
 
+    app.get("/resturant/api/v1/fooditems/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await addFoodItemsCollections.findOne(query);
+      res.send(result);
+    });
+
     app.delete("/resturant/api/v1/fooditems/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await addFoodItemsCollections.deleteOne(query);
+      res.send(result);
+    });
+
+    app.patch("/resturant/api/v1/fooditems/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateProduct = await req.body;
+      const updateItem = {
+        $set: {
+          str_Name: updateProduct.str_Name,
+          str_Prize: updateProduct.str_Prize,
+          category: updateProduct.category,
+          str_Thumb: updateProduct.str_Thumb,
+          str_Introduction: updateProduct.str_Introduction,
+        },
+      };
+      const result = await addFoodItemsCollections.updateOne(
+        filter,
+        updateItem
+      );
       res.send(result);
     });
 
