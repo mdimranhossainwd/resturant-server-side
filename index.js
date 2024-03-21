@@ -1,10 +1,11 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const stripe = require("stripe")(process.env.STRIPE_API_KEY);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
-require("dotenv").config();
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(
@@ -65,6 +66,22 @@ async function run() {
       );
     };
 
+    // PAYMENT OST METHOD
+    app.post("/resturant/api/v1/create-payment-intent", async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      console.log(amount, "amount inside the intent");
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: "usd",
+        payment_method_types: ["card"],
+      });
+
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    });
     // ALL GET ITEMS
     // GET FOOD ITEMS
     app.get("/resturant/api/v1/fooditems", gateman, async (req, res) => {
@@ -130,7 +147,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/resturant/api/v1/user", async (req, res) => {
+    app.get("/resturant/api/v1/user", gateman, async (req, res) => {
       const cursor = await userCollections.find().toArray();
       res.send(cursor);
     });
@@ -180,7 +197,7 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
