@@ -44,6 +44,9 @@ async function run() {
     const userCollections = client.db("restruantDB").collection("users");
 
     const addFoodCollections = client.db("restruantDB").collection("addfood");
+    const paymentsCollections = client.db("restruantDB").collection("payment");
+    const adminUserCollections = client.db("restruantDB").collection("user");
+
     // GATEMAN VERIFY TOKEN
 
     const gateman = (req, res, next) => {
@@ -96,6 +99,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/resturant/api/v1/user/:email", async (req, res) => {
+      const email = req.params.email;
+      console.log(email);
+      const cursor = await adminUserCollections.findOne({ email });
+      res.send(cursor);
+    });
+
     app.delete("/resturant/api/v1/fooditems/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -123,6 +133,27 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/resturant/api/v1/payment", async (req, res) => {
+      const result = await paymentsCollections.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/resturant/api/v1/payment", async (req, res) => {
+      const payment = req.body;
+      const result = await paymentsCollections.insertOne(payment);
+      console.log("payment body", payment);
+
+      const query = {
+        _id: {
+          $in: payment.singleId.map((id) => new ObjectId(id)),
+        },
+      };
+
+      const deleteResult = await addFoodCollections.deleteMany(query);
+
+      res.send({ result, deleteResult });
+    });
+
     // GET TO CART SPECEFIC ITEMS
     app.get("/resturant/api/v1/addfood", async (req, res) => {
       const cursor = await addFoodCollections.find().toArray();
@@ -144,6 +175,24 @@ async function run() {
     app.post("/resturant/api/v1/user", async (req, res) => {
       const body = req.body;
       const result = await userCollections.insertOne(body);
+      res.send(result);
+    });
+
+    // app.get("/resturant/api/v1/user/:email", async (req, res) => {
+    //   const email = req.params.email;
+    //   const cursor = await userCollections.findOne({ email });
+    //   res.send(cursor);
+    // });
+
+    app.patch("/resturant/api/v1/user/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await userCollections.updateOne(filter, updateDoc);
       res.send(result);
     });
 
