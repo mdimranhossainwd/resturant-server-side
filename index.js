@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const stripe = require("stripe")(process.env.STRIPE_API_KEY);
+const stripe = require("stripe")(process.env.RESTURANT_STRIPE_API_KEY);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 3000;
