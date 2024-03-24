@@ -12,9 +12,10 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      // "https://foodhouse-97347.web.app",
-      // "https://foodhouse-97347.firebaseapp.com",
+      "https://foodhouse-97347.web.app",
+      "https://foodhouse-97347.firebaseapp.com",
     ],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
