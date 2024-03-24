@@ -1,19 +1,19 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+require("dotenv").config();
 const stripe = require("stripe")(process.env.RESTURANT_STRIPE_API_KEY);
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 app.use(
   cors({
     origin: [
-      // "http://localhost:5173",
-      "https://foodhouse-97347.firebaseapp.com",
-      "https://foodhouse-97347.web.app",
+      "http://localhost:5173",
+      // "https://foodhouse-97347.web.app",
+      // "https://foodhouse-97347.firebaseapp.com",
     ],
     credentials: true,
   })
@@ -23,8 +23,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 const uri = `mongodb+srv://${process.env.RESTURANT_SECRET_NAME}:${process.env.RESTURANT_SECRET_PASSWORD}@cluster0.2xcsswz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
-
-console.log(uri);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -251,9 +249,9 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
